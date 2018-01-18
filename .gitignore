@@ -1,0 +1,8 @@
+/env/
+/dist
+*.egg-info
+.*.swp
+*.pyc
+*.cfg
+
+config.py
