@@ -40,7 +40,8 @@ def main():
         print utils.blue('Merging sub-repo ' + sub_repo_name + ' into main repo ' + main_repo_name)
         call(['git', 'clone', sub_repo['url']])
 
-        call(['rm', '-rf', os.path.join(sub_repo_dir, '.gitignore'), os.path.join(sub_repo_dir, 'README.md')])
+        utils.remove_file(os.path.join(sub_repo_dir, '.gitignore'))
+        utils.remove_file(os.path.join(sub_repo_dir, 'README.md'))
 
         os.chdir(sub_repo_dir)
         files = os.listdir(sub_repo_dir)

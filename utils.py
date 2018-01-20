@@ -27,6 +27,10 @@ def remove_dir(dir_path):
     if os.path.exists(dir_path):
         shutil.rmtree(dir_path, ignore_errors=False, onerror=None)
 
+def remove_file(file_path):
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
 def get_repo_name(repo_url):
     try:
         repo_name = re.search('/(.+?).git', repo_url).group(1)
