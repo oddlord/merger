@@ -3,21 +3,21 @@
 # Create and use config.py instead
 
 # Main repository's URL
-main_repo = 'git@github.com:oddlord/main-repo.git'
+main_repo_url = 'git@github.com:oddlord/main-repo.git'
 
 # Sub-repos to be merged
 # URL and destination directory
 sub_repos = [
     {
-        'url': 'git@github.com:oddlord/repo-a.git'
-        'folder': 'project-a/'
+        'url': 'git@github.com:oddlord/repo-a.git',
+        'dir': 'project-a/'
     },
     {
-        'url': 'git@github.com:oddlord/repo-b1.git'
-        'folder': 'project-b/first/'
+        'url': 'git@github.com:oddlord/repo-b1.git',
+        'dir': 'project-b/first/'
     },
     {
-        'url': 'git@github.com:oddlord/repo-b2.git'
-        'folder': 'project-b/second/'
+        'url': 'git@github.com:oddlord/repo-b2.git',
+        'dir': 'project-b/second/'
     }
 ]
