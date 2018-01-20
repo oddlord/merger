@@ -17,13 +17,14 @@ except ImportError:
     config_error()
 
 home_dir = os.path.expanduser('~')
-merger_dir = os.path.join(home_dir, 'repo-merger-tmp')
+merger_dir = os.path.join(home_dir, 'repo-merger')
 
 def main():
     if main_repo_url is None or sub_repos is None:
         config_error()
 
     old_wd = os.getcwd()
+    print 'Initialising merging dir '+merger_dir
     utils.remove_dir(merger_dir)
     utils.ensure_dir(merger_dir)
     os.chdir(merger_dir)
@@ -64,8 +65,29 @@ def main():
         os.chdir(merger_dir)
         print ''
 
+    os.chdir(main_repo_dir)
+    push = None
+    while push is None:
+        push = utils.yes_no_input('Do you want to push the merged main repo '+main_repo_name+' to remote', 'y')
+    if push:
+        call(['git', 'push'])
+
+    remote_delete = None
+    while remote_delete is None:
+        remote_delete = utils.yes_no_input('Do you want to delete the remote sub-repos', 'n')
+    if remote_delete:
+        for sub_repo in sub_repos:
+            sub_repo_name = utils.get_repo_name(sub_repo['url'])
+            print '\tTODO: delete here remote repo '+sub_repo_name+'. Not yet implemented, does nothing for now.'
+            # See https://developer.github.com/v3/repos/#delete-a-repository
+
+    clean = None
+    while clean is None:
+        clean = utils.yes_no_input('Do you want to delete the merging dir '+merger_dir+' and all its content', 'y')
+    if clean:
+        utils.remove_dir(merger_dir)
+
     os.chdir(old_wd)
-    # utils.remove_dir(merger_dir)
 
 if __name__ == '__main__':
     main()
