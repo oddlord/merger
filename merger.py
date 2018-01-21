@@ -17,14 +17,14 @@ except ImportError:
     config_error()
 
 home_dir = os.path.expanduser('~')
-merger_dir = os.path.join(home_dir, 'repo-merger')
+merger_dir = os.path.join(home_dir, 'repo-merger-ws')
 
 def main():
     if main_repo_url is None or sub_repos is None:
         config_error()
 
     old_wd = os.getcwd()
-    print 'Initialising merging dir '+merger_dir
+    print utils.blue('Initialising merging dir '+merger_dir)
     utils.remove_dir(merger_dir)
     utils.ensure_dir(merger_dir)
     os.chdir(merger_dir)
@@ -67,15 +67,14 @@ def main():
         print utils.blue('>Changes committed in sub-repo')
 
         os.chdir(main_repo_dir)
-        remote = 'sub-repo'
         print utils.blue('>Adding remote '+sub_repo_name)
-        call(['git', 'remote', 'add', remote, sub_repo_dir])
+        call(['git', 'remote', 'add', sub_repo_name, sub_repo_dir])
         print utils.blue('>Fetching remote '+sub_repo_name)
-        call(['git', 'fetch', remote])
+        call(['git', 'fetch', sub_repo_name])
         print utils.blue('>Merging '+sub_repo_name+' into '+main_repo_name)
-        call(['git', 'merge', '--allow-unrelated-histories', '--no-edit', remote+'/master'])
+        call(['git', 'merge', '--allow-unrelated-histories', '--no-edit', sub_repo_name+'/master'])
         print utils.blue('>Removing remote '+sub_repo_name)
-        call(['git', 'remote', 'remove', remote])
+        call(['git', 'remote', 'remove', sub_repo_name])
         print utils.blue('>Sub-repo '+sub_repo_name+' merged into main repo '+main_repo_name)
 
         os.chdir(merger_dir)
