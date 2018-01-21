@@ -21,3 +21,6 @@ sub_repos = [
         'dir': 'project-b/second/'
     }
 ]
+
+# Files to be deleted from sub-repos upon merging
+files_to_delete = ['.gitignore', 'README.md']

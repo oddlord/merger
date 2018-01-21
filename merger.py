@@ -12,7 +12,7 @@ def config_error():
     sys.exit(1)
 
 try:
-    from config import main_repo_url, sub_repos
+    from config import main_repo_url, sub_repos, files_to_delete
 except ImportError:
     config_error()
 
@@ -39,28 +39,44 @@ def main():
         sub_repo_dir = os.path.join(merger_dir, sub_repo_name)
 
         print utils.blue('Merging sub-repo ' + sub_repo_name + ' into main repo ' + main_repo_name)
+        print utils.blue('>Cloning sub-repo ' + sub_repo_name)
         call(['git', 'clone', sub_repo['url']])
-
-        utils.remove_file(os.path.join(sub_repo_dir, '.gitignore'))
-        utils.remove_file(os.path.join(sub_repo_dir, 'README.md'))
-
         os.chdir(sub_repo_dir)
+
+        print utils.blue('>Looking for files to delete')
+        if files_to_delete is not None and files_to_delete:
+            files = os.listdir(sub_repo_dir)
+            for f in files:
+                for ftd in files_to_delete:
+                    if (ftd.startswith('*') and f.endswith(ftd.split('*')[1])) or (not ftd.startswith('*') and f == ftd):
+                        file_path = os.path.join(sub_repo_dir, f)
+                        utils.remove_file(file_path)
+                        print utils.blue('>>File ' + file_path + ' deleted')
+
         files = os.listdir(sub_repo_dir)
         files.remove('.git')
         destination_dir = os.path.join(sub_repo_dir, sub_repo['dir'])
+        print utils.blue('>Directory ' + destination_dir + ' created')
         utils.ensure_dir(destination_dir)
         for f in files:
             call(['git', 'mv', f, sub_repo['dir']])
+            print utils.blue('>>File/dir ' + f + ' moved into ' + sub_repo['dir'])
 
         call(['git', 'add', '-A'])
         call(['git', 'commit', '-m', 'Merging '+sub_repo_name+' into '+main_repo_name])
+        print utils.blue('>Changes committed in sub-repo')
 
         os.chdir(main_repo_dir)
         remote = 'sub-repo'
+        print utils.blue('>Adding remote '+sub_repo_name)
         call(['git', 'remote', 'add', remote, sub_repo_dir])
+        print utils.blue('>Fetching remote '+sub_repo_name)
         call(['git', 'fetch', remote])
+        print utils.blue('>Merging '+sub_repo_name+' into '+main_repo_name)
         call(['git', 'merge', '--allow-unrelated-histories', '--no-edit', remote+'/master'])
+        print utils.blue('>Removing remote '+sub_repo_name)
         call(['git', 'remote', 'remove', remote])
+        print utils.blue('>Sub-repo '+sub_repo_name+' merged into main repo '+main_repo_name)
 
         os.chdir(merger_dir)
         print ''
@@ -79,7 +95,7 @@ def main():
         for sub_repo in sub_repos:
             sub_repo_name = utils.get_repo_name(sub_repo['url'])
             print '\tTODO: delete here remote repo '+sub_repo_name+'. Not yet implemented, does nothing for now.'
-            # See https://developer.github.com/v3/repos/#delete-a-repository
+            # TODO: see https://developer.github.com/v3/repos/#delete-a-repository
 
     clean = None
     while clean is None:
